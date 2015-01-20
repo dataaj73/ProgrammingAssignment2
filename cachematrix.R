@@ -1,36 +1,38 @@
 ## This file contains functions for calculating the inverse of an invertible
 ## matrix and caching the result for later use, so that it does not have to
 ## be recalculated again. makeCacheMatrix forms an object that saves the
-## the result and cacheSolve does the actual calculation of the inverse matrix.
+## the result and cacheSolve does the actual calculation of the inverse matrix
+## or returns the already made calculation.
 
 ## The makeCacheMatrix function produces a special matrix, which is 
 ## actually a list of 4 functions: setmatrix, getmatrix, setinverse and 
-## getinverse. These set the value of the matrix, return the value of the 
-## matrix, set the value of the inverse matrix and return the value of the
-## inverse matrix. Actually for the calcution of the inverse matrix only
-## the setmatrix is not needed, but it may be useful to have for other
-## purposes.
+## getinverse. As their names suggest these set the value of the matrix, 
+## return the value of the matrix, set the value of the inverse matrix and 
+## return the value of the inverse matrix. Actually setmatrix is not needed 
+## for the calculation of the inverse matrix, but it is needed for checking 
+## afterwards if the calculation has already been done or not.
 
 makeCacheMatrix <- function(x = matrix()) {
     ## inv contains the inverse matrix, it is initialized here
     inv <- NULL
     
-    ## this sets the value of the matrix whose inverse is wanted
+    ## this changes the value of the matrix whose inverse is wanted and
+    ## resets the inverse matrix to NULL
     setmatrix <- function(y) {
         x <<- y
         inv <<- NULL
     }
     
-    ## this returns the value of the matrix whose inverse is wanted
+    ## return value of the matrix
     getmatrix <- function() x
     
-    ## this sets the value of the inverse matrix
+    ## sets value of the inverse matrix
     setinverse <- function(inverse) inv <<- inverse
     
-    ## this returns the value of the inverse matrix
+    ## return value of the inverse matrix
     getinverse <- function() inv
     
-    ## function returns all the functions defined above as a list
+    ## return all the functions defined above as a list
     list(setmatrix = setmatrix, getmatrix = getmatrix, 
          setinverse = setinverse, getinverse = getinverse)
 }
@@ -43,10 +45,10 @@ makeCacheMatrix <- function(x = matrix()) {
 ## inverse matrix happens.
 
 cacheSolve <- function(x, ...) {
-    ## get the inverse of the matrix x
+    ## get inverse of the matrix x
     inv <- x$getinverse()
     
-    ## check if the inverse has been calculated and if it has been return it
+    ## check if the inverse has been calculated and, if it has, return it
     if (!is.null(inv)) {
         message("getting cached data")
         return(inv)
@@ -58,9 +60,9 @@ cacheSolve <- function(x, ...) {
     ## calculate the inverse
     inv <- solve(m, ...)
     
-    ## set the value of the inverse matrix
+    ## set value of the inverse matrix
     x$setinverse(inv)
     
-    ## Return a matrix that is the inverse of 'x'
+    ## Return inverse matrix of 'x'
     inv
 }
